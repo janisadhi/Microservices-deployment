@@ -1,0 +1,500 @@
+# frontend service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: microservices
+  annotations:
+    kubernetes.io/change-cause: "Version 0.0.1"
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: online-boutique
+      role: frontend
+  template:
+    metadata:
+      labels:
+        app: online-boutique
+        role: frontend
+    spec:
+      containers:
+        - name: frontend-container
+          image: janisadhi/frontend:latest
+          envFrom:
+          - configMapRef:
+              name: env
+          ports:
+            - containerPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: microservices
+spec:
+  selector:
+    role: frontend
+  
+  ports:  
+    - protocol: TCP
+      port: 8080
+      nodePort: 30001
+      targetPort: 8080
+  type: NodePort
+---
+
+#checkout service
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: checkoutservice
+  namespace: microservices
+  annotations:
+    kubernetes.io/change-cause: "Version 0.0.1"
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: online-boutique
+      role: checkoutservice
+  template:
+    metadata:
+      labels:
+        app: online-boutique
+        role: checkoutservice
+    spec:
+      containers:
+        - name: frontend-container
+          image: janisadhi/checkoutservice:latest
+          envFrom:
+          - configMapRef:
+              name: env
+          ports:
+            - containerPort: 5050
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: checkoutservice
+  namespace: microservices
+spec:
+  selector:
+    role: checkoutservice
+  
+  ports:  
+    - protocol: TCP
+      port: 5050
+  
+---
+
+# currency service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: currencyservice
+  namespace: microservices
+  annotations:
+    kubernetes.io/change-cause: "Version 0.0.1"
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: online-boutique
+      role: currencyservice
+  template:
+    metadata:
+      labels:
+        app: online-boutique
+        role: currencyservice
+    spec:
+      containers:
+        - name: currencyservice-container
+          image: janisadhi/currencyservice:latest
+          envFrom:
+          - configMapRef:
+              name: env
+          ports:
+            - containerPort: 7000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: currencyservice
+  namespace: microservices
+spec:
+  selector:
+    role: currencyservice
+  
+  ports:  
+    - protocol: TCP
+      port: 7000
+  
+---
+# productcatalog service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: productcatalogservice
+  namespace: microservices
+  annotations:
+    kubernetes.io/change-cause: "Version 0.0.1"
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: online-boutique
+      role: productcatalogservice
+  template:
+    metadata:
+      labels:
+        app: online-boutique
+        role: productcatalogservice
+    spec:
+      containers:
+        - name: productcatalogservice-container
+          image: janisadhi/productcatalogservice:latest
+          envFrom:
+          - configMapRef:
+              name: env
+          ports:
+            - containerPort: 3550
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: productcatalogservice
+  namespace: microservices
+spec:
+  selector:
+    role: productcatalogservice
+  
+  ports:  
+    - protocol: TCP
+      port: 3550
+  
+---
+# cart service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cartservice
+  namespace: microservices
+  annotations:
+    kubernetes.io/change-cause: "Version 0.0.1"
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: online-boutique
+      role: cartservice
+  template:
+    metadata:
+      labels:
+        app: online-boutique
+        role: cartservice
+    spec:
+      containers:
+        - name: cartservice-container
+          image: janisadhi/cartservice:latest
+          envFrom:
+          - configMapRef:
+              name: env
+          ports:
+            - containerPort: 7070
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cartservice
+  namespace: microservices
+spec:
+  selector:
+    role: cartservice
+  
+  ports:  
+    - protocol: TCP
+      port: 7070
+  
+
+---
+# shipping service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shippingservice
+  namespace: microservices
+  annotations:
+    kubernetes.io/change-cause: "Version 0.0.1"
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: online-boutique
+      role: shippingservice
+  template:
+    metadata:
+      labels:
+        app: online-boutique
+        role: shippingservice
+    spec:
+      containers:
+        - name: shippingservice-container
+          image: janisadhi/shippingservice:latest
+          envFrom:
+          - configMapRef:
+              name: env
+          ports:
+            - containerPort: 50051
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shippingservice
+  namespace: microservices
+spec:
+  selector:
+    role: shippingservice
+  
+  ports:  
+    - protocol: TCP
+      port: 50051
+
+---
+# payment service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: paymentservice
+  namespace: microservices
+  annotations:
+    kubernetes.io/change-cause: "Version 0.0.1"
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: online-boutique
+      role: paymentservice
+  template:
+    metadata:
+      labels:
+        app: online-boutique
+        role: paymentservice
+    spec:
+      containers:
+        - name: paymentservice-container
+          image: janisadhi/paymentservice:latest
+          envFrom:
+          - configMapRef:
+              name: env
+          ports:
+            - containerPort: 50051
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: paymentservice
+  namespace: microservices
+spec:
+  selector:
+    role: paymentservice
+  
+  ports:  
+    - protocol: TCP
+      port: 50051
+  
+
+---
+# email service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: emailservice
+  namespace: microservices
+  annotations:
+    kubernetes.io/change-cause: "Version 0.0.1"
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: online-boutique
+      role: emailservice
+  template:
+    metadata:
+      labels:
+        app: online-boutique
+        role: emailservice
+    spec:
+      containers:
+        - name: emailservice-container
+          image: janisadhi/emailservice:latest
+          envFrom:
+          - configMapRef:
+              name: env
+          ports:
+            - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: emailservice
+  namespace: microservices
+spec:
+  selector:
+    role: emailservice
+  
+  ports:  
+    - protocol: TCP
+      port: 5000
+
+
+---
+# ad service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adservice
+  namespace: microservices
+  annotations:
+    kubernetes.io/change-cause: "Version 0.0.1"
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: online-boutique
+      role: adservice
+  template:
+    metadata:
+      labels:
+        app: online-boutique
+        role: adservice
+    spec:
+      containers:
+        - name: adservice-container
+          image: janisadhi/adservice:latest
+          envFrom:
+          - configMapRef:
+              name: env
+          ports:
+            - containerPort: 9555
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: adservice
+  namespace: microservices
+spec:
+  selector:
+    role: adservice
+  
+  ports:  
+    - protocol: TCP
+      port: 9555
+
+---
+
+# recommendation service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recommendationservice
+  namespace: microservices
+  annotations:
+    kubernetes.io/change-cause: "Version 0.0.1"
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: online-boutique
+      role: recommendationservice
+  template:
+    metadata:
+      labels:
+        app: online-boutique
+        role: recommendationservice
+    spec:
+      containers:
+        - name: recommendationservice-container
+          image: janisadhi/recommendationservice:latest
+          envFrom:
+          - configMapRef:
+              name: env
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: recommendationservice
+  namespace: microservices
+spec:
+  selector:
+    role: recommendationservice
+  
+  ports:  
+    - protocol: TCP
+      port: 8080
+
+
+
+
+
+  
+
+  
+
+  
+
+  
