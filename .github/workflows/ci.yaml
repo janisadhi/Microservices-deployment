@@ -23,6 +23,12 @@ jobs:
           echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig.yaml
           export KUBECONFIG=kubeconfig.yaml
 
+      - name: Debug KUBE_CONTEXT secret
+        run: echo "KUBE_CONTEXT is set to ${{ secrets.KUBE_CONTEXT }}"
+
+      - name: Display kubeconfig.yaml
+        run: cat kubeconfig.yaml
+
       - name: Display available kubectl contexts
         run: |
           kubectl config get-contexts
