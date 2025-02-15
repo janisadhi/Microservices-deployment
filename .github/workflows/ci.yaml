@@ -26,8 +26,6 @@ jobs:
       - name: Debug KUBE_CONTEXT secret
         run: echo "KUBE_CONTEXT is set to ${{ vars.KUBE_CONTEXT }}"
 
-      - name: Display kubeconfig.yaml
-        run: cat kubeconfig.yaml
 
       - name: Display available kubectl contexts
         run: |
