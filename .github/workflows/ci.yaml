@@ -37,7 +37,7 @@ jobs:
       - name: Deploy application to Kubernetes
         run: |
           kubectl config set-context --current --namespace=microservices
-          kubectl set image deployment/frontend frontend=${{ secrets.DOCKERHUB_USERNAME }}/frontend:latest
+          kubectl set image deployment/frontend frontend-container=${{ secrets.DOCKERHUB_USERNAME }}/frontend:latest
           kubectl rollout status deployment/frontend
 
       - name: Verify the deployment
