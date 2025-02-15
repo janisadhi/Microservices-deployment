@@ -20,11 +20,11 @@ jobs:
 
       - name: Configure kubectl
         run: |
-          echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig.yaml
+          echo "${{ vars.KUBE_CONFIG }}" > kubeconfig.yaml
           export KUBECONFIG=kubeconfig.yaml
 
       - name: Debug KUBE_CONTEXT secret
-        run: echo "KUBE_CONTEXT is set to ${{ secrets.KUBE_CONTEXT }}"
+        run: echo "KUBE_CONTEXT is set to ${{ vars.KUBE_CONTEXT }}"
 
       - name: Display kubeconfig.yaml
         run: cat kubeconfig.yaml
@@ -35,7 +35,7 @@ jobs:
 
       - name: Set up kubectl context
         run: |
-          kubectl config use-context ${{ secrets.KUBE_CONTEXT }}
+          kubectl config use-context ${{ vars.KUBE_CONTEXT }}
 
       - name: Deploy application to Kubernetes
         run: |
