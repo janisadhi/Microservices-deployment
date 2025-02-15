@@ -21,20 +21,19 @@ jobs:
       - name: Configure kubectl
         run: |
           mkdir -p ~/.kube
-          echo "${{ vars.KUBE_CONFIG }}" > ~/.kube/config
-
-      - name: Debug KUBE_CONTEXT secret
-        run: echo "KUBE_CONTEXT is set to ${{ vars.KUBE_CONTEXT }}"
-
-
-      - name: Display available kubectl contexts
-        run: |
-          kubectl config get-contexts
+          echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
 
       - name: Set up kubectl context
         run: |
           kubectl config use-context ${{ vars.KUBE_CONTEXT }}
-
+        
+      - name: Set up AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          
       - name: Deploy application to Kubernetes
         run: |
           kubectl set image deployment/frontend frontend=${{ secrets.DOCKERHUB_USERNAME }}/frontend:latest
