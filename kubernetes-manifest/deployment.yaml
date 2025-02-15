@@ -28,10 +28,17 @@ spec:
           image: janisadhi/frontend:latest
           envFrom:
           - configMapRef:
-              name: env
+              name: env-config
           ports:
             - containerPort: 8080
-
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+          
 ---
 apiVersion: v1
 kind: Service
@@ -45,9 +52,7 @@ spec:
   ports:  
     - protocol: TCP
       port: 8080
-      nodePort: 30001
-      targetPort: 8080
-  type: NodePort
+
 ---
 
 #checkout service
@@ -77,13 +82,20 @@ spec:
         role: checkoutservice
     spec:
       containers:
-        - name: frontend-container
+        - name: checkoutservice-container
           image: janisadhi/checkoutservice:latest
           envFrom:
           - configMapRef:
-              name: env
+              name: env-config
           ports:
             - containerPort: 5050
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
 ---
 apiVersion: v1
 kind: Service
@@ -130,9 +142,17 @@ spec:
           image: janisadhi/currencyservice:latest
           envFrom:
           - configMapRef:
-              name: env
+              name: env-config
           ports:
             - containerPort: 7000
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+     
 ---
 apiVersion: v1
 kind: Service
@@ -178,9 +198,16 @@ spec:
           image: janisadhi/productcatalogservice:latest
           envFrom:
           - configMapRef:
-              name: env
+              name: env-config
           ports:
             - containerPort: 3550
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
 ---
 apiVersion: v1
 kind: Service
@@ -226,9 +253,16 @@ spec:
           image: janisadhi/cartservice:latest
           envFrom:
           - configMapRef:
-              name: env
+              name: env-config
           ports:
             - containerPort: 7070
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
 ---
 apiVersion: v1
 kind: Service
@@ -275,9 +309,16 @@ spec:
           image: janisadhi/shippingservice:latest
           envFrom:
           - configMapRef:
-              name: env
+              name: env-config
           ports:
             - containerPort: 50051
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
 ---
 apiVersion: v1
 kind: Service
@@ -323,9 +364,16 @@ spec:
           image: janisadhi/paymentservice:latest
           envFrom:
           - configMapRef:
-              name: env
+              name: env-config
           ports:
             - containerPort: 50051
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
 ---
 apiVersion: v1
 kind: Service
@@ -372,9 +420,16 @@ spec:
           image: janisadhi/emailservice:latest
           envFrom:
           - configMapRef:
-              name: env
+              name: env-config
           ports:
             - containerPort: 5000
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
 ---
 apiVersion: v1
 kind: Service
@@ -421,9 +476,16 @@ spec:
           image: janisadhi/adservice:latest
           envFrom:
           - configMapRef:
-              name: env
+              name: env-config
           ports:
             - containerPort: 9555
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
 ---
 apiVersion: v1
 kind: Service
@@ -470,9 +532,16 @@ spec:
           image: janisadhi/recommendationservice:latest
           envFrom:
           - configMapRef:
-              name: env
+              name: env-config
           ports:
             - containerPort: 8080
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
 ---
 apiVersion: v1
 kind: Service
@@ -486,10 +555,61 @@ spec:
   ports:  
     - protocol: TCP
       port: 8080
+---
+# nginx-reverse-proxy
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-reverse-proxy
+  namespace: microservices
+  labels:
+    app: nginx-reverse-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-reverse-proxy
+  template:
+    metadata:
+      labels:
+        app: nginx-reverse-proxy
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        imagePullPolicy: Always  
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: nginx-config
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+        resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: nginx-config
 
-
-
-
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+  namespace: microservices
+spec:
+  selector:
+    app: nginx-reverse-proxy
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer
 
   
 
