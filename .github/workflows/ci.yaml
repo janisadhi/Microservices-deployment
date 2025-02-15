@@ -20,6 +20,7 @@ jobs:
 
       - name: Configure kubectl
         run: |
+          mkdir -p ~/.kube
           echo "${{ vars.KUBE_CONFIG }}" > ~/.kube/config
 
       - name: Debug KUBE_CONTEXT secret
